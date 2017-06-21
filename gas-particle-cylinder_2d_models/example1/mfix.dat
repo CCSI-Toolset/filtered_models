@@ -1,0 +1,335 @@
+################################################################################
+# CCSI 1MM Adsorber input deck - 2015-2 Release version                        #
+#                                                                              #
+# Authors: Jeff Dietiker,NETL                                                  #
+#          William Lane, BU                                                    #
+#          Kevin Lai, PNNL                                                     #
+# Date: January 24, 2015                                                       #
+#                                                                              #
+################################################################################
+
+#_______________________________________________________________________________
+# RUN CONTROL SECTION
+  RUN_NAME              = 'EXAMPLE1'
+  DESCRIPTION           = '1 MW ADSORBER, 2015-2 VERSION'
+  RUN_TYPE              = 'NEW'
+  UNITS                 = 'SI'
+  TIME                  =  0.0     ! (sec) 
+  TSTOP                 =  500.0   ! (sec)
+  DT                    =  1.0E-3  ! (sec)
+  DT_MAX                =  1.0E-2  ! (sec)
+  DT_MIN                =  1.0E-8  ! (sec)
+
+  ENERGY_EQ             = .TRUE.                
+  SPECIES_EQ            = .FALSE.  .FALSE.
+
+#_______________________________________________________________________________
+# DRAG AND FILTER MODEL
+                            !         ^
+                            !        / \       The cylinder filter model 
+  DRAG_TYPE     = 'WEN_YU'  !       / | \      is activated through IC#2 
+                            !      /  |  \     This will automatically 
+                            !     /   |   \    turn on the Igci filter
+                            !    /    o    \   model outside the
+                            !   /___________\  cylinder region
+  SG_CYL_HYDRO  = .TRUE.
+  SG_CYL_ENERGY = .TRUE.
+  SG_CYL_D      =  0.01
+  SG_CYL_a      =  0.11
+  SG_CYL_T      =  305.35
+
+#_______________________________________________________________________________
+# TURBULENCE MODEL     
+  L_scale0        =  0.130  ! (m)  Turbulent length scale. This setting
+                                 ! turns on the algebraic turbulence model
+  MU_GMAX         =  5.0E+1      ! Maximum value of the turbulent viscosity
+                                 ! of the fluid
+      
+#_______________________________________________________________________________
+# NUMERICAL SECTION
+! Normalize residuals:
+  NORM_G = 0.0
+  NORM_S = 0.0
+
+  MAX_NIT           =  50
+  TOL_RESID         =  3.0E-3
+
+  MAX_INLET_VEL_FAC =  1000.0
+
+  LEQ_PC(1:9)       = 9*'NONE' ! No preconditioner
+
+  DISCRETIZE(1:9)   = 9*6      ! FOUP
+
+#_______________________________________________________________________________
+# GEOMETRY SECTION
+  COORDINATES = 'CARTESIAN'
+  XLENGTH     =  1.332   ! (m)
+  IMAX        =  36
+  YLENGTH     =  6.884   ! (m)
+  JMAX        =  186
+  ZLENGTH     =  1.221   ! (m)    
+  NO_K        = .TRUE.
+
+#_______________________________________________________________________________
+# MATERIAL SECTION
+! Gas Section
+!-----------------------------------------------------------------------------//
+ 
+  NMAX_g             =  1
+  MU_g0              =  1.8E-5  ! (Pa.s)
+  MW_g               =  28.00   ! (kg/kmol)
+  C_pg0              =  1040.0  ! (J/kg.K)
+  K_g0               =  0.026   ! (W/m.K)
+
+
+! Particle Section
+!-----------------------------------------------------------------------------//
+
+  EP_star = 0.40    ! void fraction at maximum packing (-)
+  e       = 0.9     ! part-part restitution coefficient (-)
+  e_w     = 0.9     ! part-wall restitution coefficient (-)
+  Phi     = 30.0    ! angle of internal friction (degrees)
+  Phi_w   = 11.31   ! particle-wall angle of internal friction (degrees)
+  PhiP    = 0.0     ! Specularity coefficient, particle-wall collisions (-)
+
+  MMAX    = 2
+
+! Solids phase 1:
+!-----------------------------------------------------------------------------//
+  NMAX_s(1)            =  1
+
+  RO_s0(1)             =  484.0    ! (kg/m3) solids density
+  D_p0(1)              =  118E-6   ! (m) particle diameter
+  C_ps0(1)             =  830.0    ! (J/kg.K) SiO2
+  K_s0(1)              =  0.2      ! (W/m.K) SiO2
+  MW_s(1,1)            =  60.0     ! (kg/kmol) SiO2      --  
+  CLOSE_PACKED(1)      = .TRUE.
+
+! Solids phase 2: cooling tubes
+!-----------------------------------------------------------------------------//
+      
+  NMAX_s(2)            =  1
+
+  RO_s0(2)             =  1.0     ! (kg/m3) solids density
+  D_p0(2)              =  1.0     ! (m) particle diameter
+  C_ps0(2)             =  1000.0  ! (J/kg.K)
+  K_s0(2)              =  0.1     ! (W/m.K)
+  MW_s(2,1)            =  1.0     ! (kg/kmol) moluculare weight
+  C_F                  =  0.0
+
+#_______________________________________________________________________________
+# INITIAL CONDITIONS SECTION
+! Entire domain initialized as stagnant air
+!-----------------------------------------------------------------------------//
+  IC_X_w(1)     =  0.000      ! (m)
+  IC_X_e(1)     =  1.332      ! (m)
+  IC_Y_s(1)     =  0.000      ! (m)
+  IC_Y_n(1)     =  6.882      ! (m)
+
+! Gas Phase
+!----------
+  IC_EP_g(1)    =  1.000      ! (-)
+
+  IC_U_g(1)     =  0.0        ! (m/s)
+  IC_V_g(1)     =  0.0        ! (m/s) 
+
+  IC_P_g(1)     =  101325.0   ! (Pa)
+  IC_T_g(1)     =  313.15     ! (K)
+
+  IC_X_g(1,1)   =  1.00       ! N2
+
+! Solids phase 1: 32D Sorbent
+!----------------------------
+  IC_ROP_s(1,1) =  0.0           ! (kg/m^3)  
+ 
+  IC_U_s(1,1)   =  0.0           ! (m/s)
+  IC_V_s(1,1)   =  0.0           ! (m/s)
+
+  IC_T_s(1,1)   =  313.15        ! (K)
+
+  IC_X_s(1,1,1) =  1.00          ! SiO2      --  
+
+! Solids phase 2: Cooling tubes
+!------------------------------
+  IC_ROP_s(1,2) =  0.0           ! (kg/m^3)
+
+  IC_U_s(1,2)   =  0.0           ! (m/s)
+  IC_V_s(1,2)   =  0.0           ! (m/s)
+
+  IC_T_s(1,2)   =  313.15        ! (K)
+
+  IC_X_s(1,2,1) =  0.0
+ 
+! Cooling rods region 
+!-----------------------------------------------------------------------------//
+  IC_X_w(2)     =  0.222    ! (m)
+  IC_X_e(2)     =  1.332    ! (m)
+  IC_Y_s(2)     =  0.111    ! (m)
+  IC_Y_n(2)     =  5.884    ! (m)
+
+! Gas Phase
+!----------
+  IC_EP_g(2)    =  0.987     ! (m)
+
+  IC_U_g(2)     =  0.0       ! (m/s)
+  IC_V_g(2)     =  0.0       ! (m/s)
+
+  IC_P_g(2)     =  101325.0  ! (Pa)
+  IC_T_g(2)     =  313.15    ! (K)
+
+  IC_X_g(2,1)   =  1.00      ! N2
+
+! Solids phase 1: 32D Sorbent
+!----------------------------
+  IC_ROP_s(2,1) =  0.0       ! (kg/m^3)
+
+  IC_U_s(2,1)   =  0.0       ! (m/s)
+  IC_V_s(2,1)   =  0.0       ! (m/s)
+
+  IC_T_s(2,1)   =  313.15    ! (K)
+
+  IC_X_s(2,1,1) =  1.00      ! SiO2      --  
+
+! Solids phase 1: Cooling tubes
+!------------------------------
+  IC_ROP_s(2,2) =  0.013     ! (kg/m^3)  (2*Pi*D^2/4)/(a^2)
+
+  IC_U_s(2,2)   =  0.0       ! (m/s)
+  IC_V_s(2,2)   =  0.0       ! (m/s)
+
+  IC_T_s(2,2)   =  305.35    ! (K)
+
+  IC_X_s(2,2,1) =  1.0       ! 'Fe'
+  
+#_______________________________________________________________________________
+# BOUNDARY CONDITIONS SECTION
+! Uniform fluidization at bottom
+!-----------------------------------------------------------------------------//
+  BC_X_w(1)          =  0.000    ! (m)
+  BC_X_e(1)          =  1.332    ! (m)
+  BC_Y_s(1)          =  0.000    ! (m)
+  BC_Y_n(1)          =  0.000    ! (m)
+
+  BC_TYPE(1)         =  'MI'
+
+  BC_EP_g(1)         =  1.0      ! (-)
+  
+  BC_P_g(1)          =  128127.0 ! (Pa)
+
+  BC_T_g(1)          =  316.03   ! (K)
+  
+  BC_X_g(1,1)        =  1.00     ! N2
+
+  BC_MASSFLOW_g(1)   =  0.60     ! (kg/s)
+
+! Top-left, mass inlet (gas + sorbent)
+!-----------------------------------------------------------------------------//
+  BC_X_w(2)          =  0.000   ! (m)
+  BC_X_e(2)          =  0.111   ! (m)
+  BC_Y_s(2)          =  6.882   ! (m)
+  BC_Y_n(2)          =  6.882   ! (m)
+
+  BC_TYPE(2)         = 'MI'
+  
+  BC_EP_g(2)         =  0.500     ! (-)
+  BC_ROP_s(2,1)      =  242.0     ! (kg/m^3)  solids volume fraction = 0.50
+  BC_ROP_s(2,2)      =  0.0
+
+  BC_P_g(2)          =  101000.0  ! (Pa)
+
+  BC_T_g(2)          =  332.13    ! (K)
+  BC_T_s(2,1)        =  332.13    ! (K)
+  
+  BC_X_g(2,1)        =  1.00      ! N2
+
+  BC_X_s(2,1,1)      =  1.00      ! SiO2      --  
+
+  BC_X_s(2,2,1)      =  1.00
+  
+  BC_MASSFLOW_g(2)   =  0.0066    ! (kg/s)
+  BC_MASSFLOW_s(2,1) =  2.5394    ! (kg/s)
+
+! Vessel walls + Downchute internal wall 
+!-----------------------------------------------------------------------------//
+  BC_X_w(3:5)        =  0.000  1.332  0.111    ! (m)
+  BC_X_e(3:5)        =  0.000  1.332  0.222    ! (m)
+  BC_Y_s(3:5)        =  0.000  0.000  0.222    ! (m)
+  BC_Y_n(3:5)        =  6.882  6.882  6.882    ! (m)
+
+  BC_TYPE(3:5)       = 'FSW'  'FSW'  'FSW'
+
+  BC_hw_T_g(3:5)     = 3*0.0
+  BC_hw_T_s(3:5,1)   = 3*0.0
+  BC_hw_T_s(3:5,2)   = 3*0.0
+
+  BC_C_T_g(3:5)      = 3*0.0
+  BC_C_T_s(3:5,1)    = 3*0.0
+  BC_C_T_s(3:5,2)    = 3*0.0
+
+  BC_Xw_g(3:5,1)     = 3*0.0
+  BC_Xw_g(3:5,2)     = 3*0.0
+  BC_Xw_g(3:5,3)     = 3*0.0
+  BC_Xw_g(3:5,4)     = 3*0.0
+  BC_Xw_s(3:5,1,1)   = 3*0.0
+  BC_Xw_s(3:5,1,2)   = 3*0.0
+  BC_Xw_s(3:5,1,3)   = 3*0.0
+  BC_Xw_s(3:5,1,4)   = 3*0.0
+  BC_Xw_s(3:5,1,5)   = 3*0.0
+  BC_Xw_s(3:5,1,6)   = 3*0.0
+  BC_Xw_s(3:5,2,1)   = 3*0.0
+
+! Pressure Outlets        Top         Side
+!-----------------------------------------------------------------------------//
+  BC_X_w(6:7)        =  0.222      1.332       ! (m)
+  BC_X_e(6:7)        =  1.332      1.332       ! (m)
+  BC_Y_s(6:7)        =  6.882      4.773       ! (m)
+  BC_Y_n(6:7)        =  6.882      4.884       ! (m)
+
+  BC_TYPE(6:7)       = 'PO'       'PO'
+  
+  BC_P_g(6:7)        =  101000.0   101000.0    ! (pa) 
+
+#_______________________________________________________________________________
+# INTERNAL SURFACE 
+! Semi-impermeable surface at top to prevent solids from leaving
+!-----------------------------------------------------------------------------//
+  IS_X_w(1)  =  0.222   ! (m)
+  IS_X_e(1)  =  1.332   ! (m)
+  IS_Y_s(1)  =  6.882   ! (m)
+  IS_Y_n(1)  =  6.882   ! (m)
+
+  IS_TYPE(1) = 'SP'
+  IS_PC(1,1) =  1.0E32
+  IS_PC(1,2) =  0.0
+
+#_______________________________________________________________________________
+# OUTPUT CONTROL SECTION
+! RES and SPX files
+!-----------------------------------------------------------------------------//
+  RES_DT       =  0.1
+  SPX_DT(1)    =  0.1      ! EP_g
+  SPX_DT(2)    =  0.1      ! P_g, P*
+  SPX_DT(3)    =  0.1      ! U_g, V_g, W_g
+  SPX_DT(4)    =  0.1      ! U_s, V_s, W_s
+  SPX_DT(5)    =  0.1      ! ROP_s
+  SPX_DT(6)    =  0.1      ! T_g, T_s
+  SPX_DT(7)    =  0.1      ! X_g, X_s
+  SPX_DT(8)    =  1000.0   ! Theta
+  SPX_DT(9)    =  1000.0   ! UDS
+  SPX_DT(10)   =  0.1      ! RRates
+  SPX_DT(11)   =  1000.0   ! k, e
+
+
+  RESID_STRING    = 'P0', 'U0', 'V0','W0', 'U1', 'V1','W1'
+  GROUP_RESID     = .TRUE.
+
+  NLOG            = 25
+  FULL_LOG        = .TRUE.
+  WRITE_DASHBOARD = .TRUE.
+  F_DASHBOARD     = 1
+
+#_______________________________________________________________________________
+# DMP SETUP
+  NODESI =  2
+  NODESJ =  8
+  NODESK =  1

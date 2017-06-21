@@ -1,0 +1,492 @@
+################################################################################
+#                                                                              #
+# CCSI 1MM Adsorber input file - 2015-2 Release version                        #
+#                                                                              #
+# Authors: Jeff Dietiker,NETL                                                  #
+#          William Lane, BU                                                    #
+#          Kevin Lai, PNNL                                                     #
+# Date: January, 2016                                                          #
+#                                                                              #
+################################################################################
+
+#_______________________________________________________________________________
+# RUN CONTROL SECTION
+
+  RUN_NAME              = 'EXAMPLE2'
+  DESCRIPTION           = '1 MW ADSORBER, 2015-2 VERSION'
+  RUN_TYPE              = 'NEW'
+  UNITS                 = 'SI'
+  TIME                  =   0.0     ! (sec) 
+  TSTOP                 =   500.0   ! (sec)
+  DT                    =   1.0E-3  ! (sec)
+  DT_MAX                =   1.0E-2  ! (sec)
+  DT_MIN                =   1.0E-8  ! (sec)
+  PERSISTENT_MODE       = .TRUE.
+
+  ENERGY_EQ             = .TRUE.
+  SPECIES_EQ            = .TRUE. .TRUE.
+
+  CALL_USR              = .TRUE.
+
+#_______________________________________________________________________________
+# DRAG AND FILTER MODEL
+
+  DRAG_TYPE     = 'WEN_YU'
+
+  SG_CYL_HYDRO  = .TRUE.
+  SG_CYL_ENERGY = .TRUE.
+  SG_CYL_D      =  0.01
+  SG_CYL_a      =  0.11
+  SG_CYL_T      =  305.35
+
+#_______________________________________________________________________________
+# TURBULENCE MODEL     
+
+  L_scale0        =  0.130       ! (m)  Turbulent length scale. This setting
+                                 ! turns on the algebraic turbulence model
+  MU_GMAX         =  5.0E+1      ! Maximum value of the turbulent viscosity of the fluid
+      
+#_______________________________________________________________________________
+# NUMERICAL SECTION
+
+! Normalize residuals:
+  NORM_G            =  0.0
+  NORM_S            =  0.0
+
+  MAX_NIT           =  50
+  TOL_RESID         =  5.0E-3
+
+  MAX_INLET_VEL_FAC =  1000.0
+
+  DISCRETIZE        = 9*0
+
+#_______________________________________________________________________________
+# GEOMETRY SECTION
+
+  COORDINATES = 'CARTESIAN'
+  XLENGTH     =  1.332  ! (m)
+  IMAX        =  36
+  YLENGTH     =  6.884   ! (m)
+  JMAX        =  186
+  ZLENGTH     =  1.221   ! (m)    
+  NO_K        = .TRUE.
+
+#_______________________________________________________________________________
+# MATERIAL SECTION
+
+! Gas Section
+!-----------------------------------------------------------------------------//
+  NMAX_g               =  4
+
+  MU_g0                =  1.8E-5  ! (Pa.s)
+  K_g0                 =  0.026
+
+  MW_g(1)              =  28.00   ! (kg/kmol)
+  MW_g(2)              =  44.00   ! (kg/kmol)
+  MW_g(3)              =  18.00   ! (kg/kmol)
+  MW_g(4)              =  32.00   ! (kg/kmol)
+
+  SPECIES_g(1)         = 'N2'
+  SPECIES_g(2)         = 'CO2'
+  SPECIES_g(3)         = 'H2O'
+  SPECIES_g(4)         = 'O2'
+
+  SPECIES_ALIAS_g(1)   = 'N2'
+  SPECIES_ALIAS_g(2)   = 'CO2'
+  SPECIES_ALIAS_g(3)   = 'H2O_g'
+  SPECIES_ALIAS_g(4)   = 'O2'
+
+! Particle Section
+!-----------------------------------------------------------------------------//
+  EP_star              =  0.40    ! void fraction at maximum packing (-)
+  e                    =  0.9     ! part-part restitution coefficient (-)
+  e_w                  =  0.9     ! part-wall restitution coefficient (-)
+  Phi                  =  30.0    ! angle of internal friction (degrees)
+  Phi_w                =  11.31   ! particle-wall angle of internal friction (degrees)
+  PhiP                 =  0.0     ! Specularity coefficient, particle-wall collisions (-)
+  MMAX                 =  2
+
+! Solids phase 1: 32D sorbent
+!----------------------------
+  NMAX_s(1)            =  6
+
+  RO_s0(1)             =  484.0     ! (kg/m^3)
+  D_p0(1)              =  118.0E-6  ! (m)
+  K_s0(1)              =  0.2
+
+  CLOSE_PACKED(1)      = .TRUE.
+
+  MW_s(1,1)            =  60.0      ! (kg/kmol) SiO2      --  
+  MW_s(1,2)            =  43.0      ! (kg/kmol) R2NH      --  PolyEthyleneImines (PEIs) 
+  MW_s(1,3)            =  86.0      ! (kg/kmol) R2NCO2-   --  Carbamate Ion
+  MW_s(1,4)            =  44.0      ! (kg/kmol) R2NH2+    --  Protonated amine
+  MW_s(1,5)            =  61.0      ! (kg/kmol) HCO3-     --  Bicarbonate Ion
+  MW_s(1,6)            =  18.0      ! (kg/kmol) H2O(abs)  --  Physisorbed Water
+
+  SPECIES_s(1,1)       = 'SiO2'
+  SPECIES_s(1,2)       = 'R2NH'
+  SPECIES_s(1,3)       = 'R2NCO2-'
+  SPECIES_s(1,4)       = 'R2NH2+'
+  SPECIES_s(1,5)       = 'HCO3-'
+  SPECIES_s(1,6)       = 'H2O(abs)'
+
+  SPECIES_Alias_s(1,1) = 'SiO2'
+  SPECIES_Alias_s(1,2) = 'R2NH'
+  SPECIES_Alias_s(1,3) = 'R2NCO2'
+  SPECIES_Alias_s(1,4) = 'R2NH2'
+  SPECIES_Alias_s(1,5) = 'HCO3'
+  SPECIES_Alias_s(1,6) = 'H2O_s'
+
+! Solids phase 2: cooling tubes
+!------------------------------
+  NMAX_s(2)            =  1
+
+  RO_s0(2)             =  7850.0    ! (kg/m^3)
+  D_p0(2)              =  100.0E-6  ! (m)
+  K_s0(2)              =  80.0
+  C_F                  =  0.0
+
+  MW_s(2,1)            =  56.0      ! (kg/kmol)
+
+  SPECIES_s(2,1)       = 'Fe'
+
+#_______________________________________________________________________________
+# INITIAL CONDITIONS SECTION
+
+! Entire domain initialized as stagnant air
+!-----------------------------------------------------------------------------//
+  IC_X_w(1)     =  0.000      ! (m)
+  IC_X_e(1)     =  1.332      ! (m)
+  IC_Y_s(1)     =  0.000      ! (m)
+  IC_Y_n(1)     =  6.882      ! (m)
+
+! Gas Phase
+!----------
+  IC_EP_g(1)    =  1.0
+
+  IC_U_g(1)     =  0.0        ! (m/s)
+  IC_V_g(1)     =  0.0        ! (m/s) 
+
+  IC_P_g(1)     =  101325.0   ! (Pa)
+  IC_T_g(1)     =  313.15     ! (K)
+
+  IC_X_g(1,1)   =  0.73       ! N2
+  IC_X_g(1,2)   =  0.05       ! CO2
+  IC_X_g(1,3)   =  0.02       ! H2O
+  IC_X_g(1,4)   =  0.20       ! O2
+
+! Solids phase 1: 32D sorbent
+!----------------------------
+  IC_X_s(1,1,1) =  0.85       ! SiO2      -- For nv0 calculation 
+  IC_X_s(1,1,2) =  0.15
+
+
+! Cooling rods region 
+!-----------------------------------------------------------------------------//
+  IC_X_w(2)     =  0.222     ! (m)
+  IC_X_e(2)     =  1.332     ! (m)
+  IC_Y_s(2)     =  0.111     ! (m)
+  IC_Y_n(2)     =  5.883     ! (m)
+
+! Gas Phase
+!----------
+  IC_EP_g(2)    =  0.987
+
+  IC_U_g(2)     =  0.0       ! (m/s)
+  IC_V_g(2)     =  0.0       ! (m/s)
+
+  IC_P_g(2)     =  101325.0  ! (Pa)
+  IC_T_g(2)     =  313.15    ! (K)
+
+  IC_X_g(2,1)   =  0.73      ! N2
+  IC_X_g(2,2)   =  0.05      ! CO2
+  IC_X_g(2,3)   =  0.02      ! H2O
+  IC_X_g(2,4)   =  0.20      ! O2
+
+! Solids phase 1: 32D sorbent
+!----------------------------
+  IC_EP_s(2,1)  =  0.0
+  IC_U_s(2,1)   =  0.0       ! (m/s)
+  IC_V_s(2,1)   =  0.0       ! (m/s)
+  IC_T_s(2,1)   =  313.15    ! (m/s)
+    
+  IC_X_s(2,1,1) =  0.85      ! SiO2
+  IC_X_s(2,1,2) =  0.15
+
+! Solids phase 2: Cooling tubes
+!------------------------------
+  IC_EP_s(2,2)  =  0.013     ! (2*Pi*D^2/4)/(a^2)
+
+  IC_U_s(2,2)   =  0.0       ! (m/s)
+  IC_V_s(2,2)   =  0.0       ! (m/s)
+
+  IC_T_s(2,2)   =  305.35    ! (K)
+
+  IC_X_s(2,2,1) =  1.0       ! 'Fe'
+
+#_______________________________________________________________________________
+# BOUNDARY CONDITIONS SECTION
+
+! Uniform fluidization at bottom
+!-----------------------------------------------------------------------------//
+  BC_X_w(1)          =  0.222    ! (m)
+  BC_X_e(1)          =  1.332    ! (m)
+  BC_Y_s(1)          =  0.000    ! (m)
+  BC_Y_n(1)          =  0.000    ! (m)
+
+  BC_TYPE(1)         =  'MI'
+
+! Gas Phase
+!----------
+  BC_EP_g(1)         =  1.0      ! (-)
+  
+  BC_P_g(1)          =  128127.0 ! (Pa)
+
+  BC_T_g(1)          =  316.03   ! (K)
+  
+  BC_X_g(1,1)        =  0.771    ! N2
+  BC_X_g(1,2)        =  0.193    ! CO2
+  BC_X_g(1,3)        =  0.036    ! H2O
+  BC_X_g(1,4)        =  0.000    ! O2
+
+  BC_MASSFLOW_g(1)   =  0.60     ! (kg/s)
+
+! Top-left, mass inlet (gas + sorbent)
+!-----------------------------------------------------------------------------//
+  BC_X_w(2)          =  0.000     ! (m)
+  BC_X_e(2)          =  0.111     ! (m)
+  BC_Y_s(2)          =  6.882     ! (m)
+  BC_Y_n(2)          =  6.882     ! (m)
+
+  BC_TYPE(2)         = 'MI'
+
+! Gas Phase
+!----------
+  BC_EP_g(2)         =  0.5
+
+  BC_P_g(2)          =  101000.0  ! (Pa)
+
+  BC_T_g(2)          =  332.13    ! (K)
+
+  BC_X_g(2,1)        =  0.79      ! N2
+  BC_X_g(2,2)        =  0.00      ! CO2
+  BC_X_g(2,3)        =  0.03      ! H2O
+  BC_X_g(2,4)        =  0.18      ! O2
+
+  BC_MASSFLOW_g(2)   =  0.0066    ! (kg/s)
+
+! Solids phase 1: 32D sorbent
+!----------------------------
+  BC_EP_s(2,1)       =  0.5
+
+  BC_T_s(2,1)        =  332.13    ! (K)
+
+  BC_X_s(2,1,1)      =  0.85      ! SiO2      --  
+  BC_X_s(2,1,2)      =  0.15      ! R2NH      --  PolyEthyleneImines (PEIs) 
+  BC_X_s(2,1,3)      =  0.00      ! R2NCO2-   --  Carbamate Ion
+  BC_X_s(2,1,4)      =  0.00      ! R2NH2+    --  Protonated amine
+  BC_X_s(2,1,5)      =  0.00      ! HCO3-     --  Bicarbonate Ion
+  BC_X_s(2,1,6)      =  0.00      ! H2O(abs)  --  Physisorbed Water
+
+  BC_MASSFLOW_s(2,1) =  2.5394    ! (kg/s)
+
+! Solids phase 2: Cooling tubes
+!------------------------------
+  BC_EP_s(2,2)       =  0.0
+
+! Vessel walls + Downchute internal wall 
+!-----------------------------------------------------------------------------//
+  BC_X_w(3:7)        =  0.000  0.111  1.332  1.332  0.000  ! (m)
+  BC_X_e(3:7)        =  0.000  0.222  1.332  1.332  0.222  ! (m)
+  BC_Y_s(3:7)        =  0.000  0.222  0.000  4.883  0.000  ! (m)
+  BC_Y_n(3:7)        =  6.882  6.882  4.774  6.882  0.000  ! (m)
+
+  BC_TYPE(3:7)       = 5*'FSW'
+
+! Gas Phase
+!----------
+  BC_hw_T_g(3:7)     = 5*0.0
+  BC_C_T_g(3:7)      = 5*0.0
+
+  BC_hw_X_g(3:7,1)   = 5*0.0
+  BC_hw_X_g(3:7,2)   = 5*0.0
+  BC_hw_X_g(3:7,3)   = 5*0.0
+  BC_hw_X_g(3:7,4)   = 5*0.0
+
+  BC_C_X_g(3:7,1)    = 5*0.0
+  BC_C_X_g(3:7,2)    = 5*0.0
+  BC_C_X_g(3:7,3)    = 5*0.0
+  BC_C_X_g(3:7,4)    = 5*0.0
+
+! Solids phase 1: 32D sorbent
+!----------------------------
+  BC_hw_T_s(3:7,1)   = 5*0.0
+  BC_C_T_s(3:7,1)    = 5*0.0
+
+  BC_hw_X_s(3:7,1,1) = 5*0.0
+  BC_hw_X_s(3:7,1,2) = 5*0.0
+  BC_hw_X_s(3:7,1,3) = 5*0.0
+  BC_hw_X_s(3:7,1,4) = 5*0.0
+  BC_hw_X_s(3:7,1,5) = 5*0.0
+  BC_hw_X_s(3:7,1,6) = 5*0.0
+
+  BC_C_X_s(3:7,1,1)  = 5*0.0
+  BC_C_X_s(3:7,1,2)  = 5*0.0
+  BC_C_X_s(3:7,1,3)  = 5*0.0
+  BC_C_X_s(3:7,1,4)  = 5*0.0
+  BC_C_X_s(3:7,1,5)  = 5*0.0
+  BC_C_X_s(3:7,1,6)  = 5*0.0
+
+! Solids phase 2: Cooling tubes
+!------------------------------
+  BC_hw_T_s(3:7,2)   = 5*0.0
+  BC_C_T_s(3:7,2)    = 5*0.0
+
+  BC_hw_X_s(3:7,2,1) = 5*0.0
+  BC_C_X_s(3:7,2,1)  = 5*0.0
+
+! Pressure Outlets
+!-----------------------------------------------------------------------------//
+  BC_X_w(10:11)      =  0.222  1.332  ! (m)
+  BC_X_e(10:11)      =  1.332  1.332  ! (m)
+  BC_Y_s(10:11)      =  6.882  4.774  ! (m)
+  BC_Y_n(10:11)      =  6.882  4.883  ! (m)
+
+  BC_TYPE(10:11)     = 2*'PO'
+  
+  BC_P_g(10:11)      = 2*101000.0
+
+#_______________________________________________________________________________
+# OUTPUT CONTROL SECTION
+
+! RES and SPX files
+!-----------------------------------------------------------------------------//
+  RES_DT          =  1.0
+  SPX_DT(1)       =  0.1     ! EP_g
+  SPX_DT(2)       =  0.1     ! P_g, P*
+  SPX_DT(3)       =  0.1     ! U_g, V_g, W_g
+  SPX_DT(4)       =  0.1     ! U_s, V_s, W_s
+  SPX_DT(5)       =  0.1     ! ROP_s
+  SPX_DT(6)       =  0.1     ! T_g, T_s
+  SPX_DT(7)       =  0.1     ! X_g, X_s
+  SPX_DT(8)       =  1000.0  ! Theta
+  SPX_DT(9)       =  1000.0  ! UDS
+  SPX_DT(10)      =  0.1     ! RRates
+  SPX_DT(11)      =  1000.0  ! k, e
+
+  GROUP_RESID     = .TRUE.
+  NLOG            =  25
+  FULL_LOG        = .TRUE.
+  WRITE_DASHBOARD = .TRUE.
+  F_DASHBOARD     =  1
+
+#_______________________________________________________________________________
+# DMP SETUP
+
+  NODESI =  2
+  NODESJ =  8
+  NODESK =  1
+
+  ENABLE_DMP_LOG = .FALSE.
+
+#_______________________________________________________________________________
+# CHEMICAL REACTIONS
+
+  USE_CONC        = .FALSE.
+
+! 1. Dry CO2 Adsorption
+!    2*R2NH + CO2(g) <--> R2NCO2- + R2NH2+
+  REAC_DH(1)      = -85693.91  ! J/mol
+  REAC_DS(1)      = -225.7122  ! J/mol.K
+  REAC_E(1)       =  53076.86  ! J/mol
+  REAC_LOGZETA(1) =  1.465294  ! [-]
+
+! 2. Wet CO2 Adsorption
+!    R2NH + H2O(g) + CO2(g) <--> HC03- + R2NH2+
+  REAC_DH(2)      = -108854.3
+  REAC_DS(2)      = -274.1016
+  REAC_E(2)       =  60064.73
+  REAC_LOGZETA(2) =  2.161441
+
+! 3. Water physical Adsorption
+!    H2O(g) <--> H2O(abs)
+  REAC_DH(3)      = -53100.35
+  REAC_DS(3)      = -260.1494
+  REAC_E(3)       =  67266.87
+  REAC_LOGZETA(3) =  1.88077
+
+! 1. Dry CO2 Adsorption - Forward reaction
+! 2. Dry CO2 Adsorption - Reverse reaction
+! 3. Wet CO2 Adsorption - Forward reaction
+! 4. Wet CO2 Adsorption - Reverse reaction
+! 5. Water physical Adsorption - Forward reaction
+! 6. Water physical Adsorption - Reverse reaction
+
+  @(RXNS)
+    fwd_Dry_CO2_Adsorption { chem_eq = "2R2NH + CO2 --> R2NH2 + R2NCO2" }       !  (Eq.1)
+    rev_Dry_CO2_Adsorption { chem_eq = "R2NH2 + R2NCO2 --> 2R2NH + CO2" }       !  (Eq.2)
+    fwd_Wet_CO2_Adsorption { chem_eq = "R2NH + CO2 + H2O_s --> R2NH2 + HCO3" }  !  (Eq.3)
+    rev_Wet_CO2_Adsorption { chem_eq = "R2NH2 + HCO3 --> R2NH + CO2 + H2O_s" }  !  (Eq.4)
+    fwd_H2O_physisorption  { chem_eq = "H2O_g --> H2O_s" }                      !  (Eq.5)
+    rev_H2O_physisorption  { chem_eq = "H2O_s --> H2O_g" }                      !  (Eq.6)
+  @(END)
+
+#_______________________________________________________________________________
+# THERMODYNAMICS
+
+THERMO DATA
+
+N2  REF ELEMENT   G 8/02N  2.   0.   0.   0.G   200.000  6000.000  A  28.01340 1
+ 2.95257637E+00 1.39690040E-03-4.92631603E-07 7.86010195E-11-4.60755204E-15    2
+-9.23948688E+02 5.87188762E+00 3.53100528E+00-1.23660988E-04-5.02999433E-07    3
+ 2.43530612E-09-1.40881235E-12-1.04697628E+03 2.96747038E+00 0.00000000E+00    4
+ 
+O2 REF ELEMENT    RUS 89O   2	 0    0    0G	200.000  6000.000  A  31.99880 1                
+ 3.66096083E+00 6.56365523E-04-1.41149485E-07 2.05797658E-11-1.29913248E-15    2
+-1.21597725E+03 3.41536184E+00 3.78245636E+00-2.99673415E-03 9.84730200E-06    3
+-9.68129508E-09 3.24372836E-12-1.06394356E+03 3.65767573E+00 0.00000000E+00    4
+
+H2O	          L 5/89H   2O	 1    0    0G	200.000  6000.000  A  18.01528 1              
+ 0.26770389E+01 0.29731816E-02-0.77376889E-06 0.94433514E-10-0.42689991E-14    2
+-0.29885894E+05 0.68825500E+01 0.41986352E+01-0.20364017E-02 0.65203416E-05    3
+-0.54879269E-08 0.17719680E-11-0.30293726E+05-0.84900901E+00-0.29084817E+05    4
+
+CO2               L 7/88C   1O   2    0    0G   200.000  6000.000  A  44.00980 1
+ 0.46365111E+01 0.27414569E-02-0.99589759E-06 0.16038666E-09-0.91619857E-14    2
+-0.49024904E+05-0.19348955E+01 0.23568130E+01 0.89841299E-02-0.71220632E-05    3
+ 0.24573008E-08-0.14288548E-12-0.48371971E+05 0.99009035E+01-0.47328105E+05    4
+
+SiO2              J 6/67SI 1.O  2.   0.   0.S   200.000   847.000  B  60.08430 1
+ 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00    2
+ 0.00000000E+00 0.00000000E+00-7.58511380E-01 3.05773989E-02-4.00861855E-05    3
+ 2.16194849E-08-6.17249042E-13-1.10371483E+05 1.78384529E+00-1.09550292E+05    4
+ 
+R2NH              L 7/88C   1O   2    0    0G   200.000  6000.000  A  44.00980 1
+ 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00    2
+ 0.00000000E+00 0.00000000E+00-7.58511380E-01 3.05773989E-02-4.00861855E-05    3
+ 2.16194849E-08-6.17249042E-13-1.10371483E+05 1.78384529E+00-1.09550292E+05    4
+
+R2NCO2-           L 7/88C   1O   2    0    0G   200.000  6000.000  A  44.00980 1
+ 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00    2
+ 0.00000000E+00 0.00000000E+00-7.58511380E-01 3.05773989E-02-4.00861855E-05    3
+ 2.16194849E-08-6.17249042E-13-1.10371483E+05 1.78384529E+00-1.09550292E+05    4
+
+R2NH2+            L 7/88C   1O   2    0    0G   200.000  6000.000  A  44.00980 1
+ 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00    2
+ 0.00000000E+00 0.00000000E+00-7.58511380E-01 3.05773989E-02-4.00861855E-05    3
+ 2.16194849E-08-6.17249042E-13-1.10371483E+05 1.78384529E+00-1.09550292E+05    4
+
+HCO3-             L 7/88C   1O   2    0    0G   200.000  6000.000  A  44.00980 1
+ 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00    2
+ 0.00000000E+00 0.00000000E+00-7.58511380E-01 3.05773989E-02-4.00861855E-05    3
+ 2.16194849E-08-6.17249042E-13-1.10371483E+05 1.78384529E+00-1.09550292E+05    4
+ 
+H2O(abs)          L 8/89H  2.O  1.   0.   0.L   200.000   600.000  C  18.01528 1
+ 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00    2
+ 0.00000000E+00 0.00000000E+00 7.25575005E+01-6.62445402E-01 2.56198746E-03    3
+-4.36591923E-06 2.78178981E-09-4.18865499E+04-2.88280137E+02-3.43772513E+04    4
+
+Fe                J 3/78FE 1.   0.   0.   0.G   200.000  6000.000  B  55.84700 1
+ 3.26197970E+06-1.05582533E-03 5.92906998E-07-1.07189455E-10 7.48064402E-15    2
+ 4.90969873E+04 3.52443894E+00 1.70744428E+06 1.06339224E-02-2.76118171E-05    3
+ 2.80917854E-08-1.01219824E-11 4.91843725E+04 9.80811099E+00 4.99728787E+04    4

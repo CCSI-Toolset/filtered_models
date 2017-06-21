@@ -1,0 +1,252 @@
+################################################################################
+# CCSI Mini-C2U Adsorber input deck - 2014-1 Release version                   #
+#                                                                              #
+# Authors: Jeff Dietiker,NETL                                                  #
+#          Tingwen Li, NETL                                                    #
+#          William Lane, BU                                                    #
+# Date: April, 2015                                                            #
+#                                                                              #
+################################################################################
+
+#_______________________________________________________________________________
+# RUN CONTROL SECTION
+  RUN_NAME              = 'C2U'
+  DESCRIPTION           = 'MINI-C2U ADSORBER, 2014-1 VERSION'
+  RUN_TYPE              = 'NEW'
+  UNITS                 = 'SI'
+  TIME                  = 0.0     ! (sec) 
+  TSTOP                 = 1.0     ! (sec)
+  DT                    = 1.0E-3  ! (sec)
+  DT_MAX                = 1.0E-2  ! (sec)
+  DT_MIN                = 1.0E-8  ! (sec)
+
+  ENERGY_EQ             = .FALSE.
+  SPECIES_EQ            = .FALSE.  .FALSE.
+
+#_______________________________________________________________________________
+# DRAG AND FILTER MODEL
+  DRAG_TYPE     = 'WEN_YU'  ! Gas-particle drag (3D) model requires Wen-Yu
+  SG_3D_HYDRO   = .TRUE.
+
+
+#_______________________________________________________________________________
+# NUMERICAL SECTION
+! Normalize residuals:
+  NORM_G = 0.0
+  NORM_S = 0.0
+
+  MAX_NIT           =  250
+  TOL_RESID         =  1.0E-3
+
+  MAX_INLET_VEL_FAC =  1.0E10
+
+  LEQ_PC            = 9*'NONE' ! No preconditioner
+
+  DISCRETIZE        = 9*2
+
+#_______________________________________________________________________________
+# GEOMETRY SECTION
+  COORDINATES = 'CARTESIAN'
+  XLENGTH     =  0.1   ! (m)
+  IMAX        =  10
+  YLENGTH     =  0.4   ! (m)
+  JMAX        =  40
+  ZLENGTH     =  0.1   ! (m)    
+  KMAX        =  10
+
+#_______________________________________________________________________________
+# MATERIAL SECTION
+! Gas Section
+!-----------------------------------------------------------------------------//
+  NMAX_g =  1
+  MU_g0  =  1.8E-5  ! (Pa.s)
+  MW_g   =  28.00   ! (kg/kmol)
+
+
+! Particle Section
+!-----------------------------------------------------------------------------//
+  EP_star =  0.40    ! void fraction at maximum packing (-)
+  e       =  0.9     ! part-part restitution coefficient (-)
+  e_w     =  0.8     ! part-wall restitution coefficient (-)
+  Phi     =  30.0    ! angle of internal friction (degrees)
+  Phi_w   =  30.0    ! particle-wall angle of internal friction (degrees)
+
+  MMAX    =  1
+  RO_s0   =  480.0    ! (kg/m3) solids density
+  D_p0    =  100.0E-6 ! (m) particle diameter
+
+
+#_______________________________________________________________________________
+# INITIAL CONDITIONS SECTION
+! Entire domain initialized
+!-----------------------------------------------------------------------------//
+  IC_X_w(1)     =  0.0        ! (m)
+  IC_X_e(1)     =  0.1        ! (m)
+  IC_Y_s(1)     =  0.0        ! (m)
+  IC_Y_n(1)     =  0.4        ! (m)
+  IC_Z_b(1)     =  0.0        ! (m)
+  IC_Z_t(1)     =  0.1        ! (m)
+
+! Gas Phase
+!----------
+  IC_EP_g(1)    =  1.0        ! (-)
+
+  IC_U_g(1)     =  0.0        ! (m/s)
+  IC_V_g(1)     =  0.0        ! (m/s) 
+  IC_W_g(1)     =  0.0        ! (m/s)
+
+  IC_P_g(1)     =  101325.0   ! (Pa)
+  IC_T_g(1)     =  298.0      ! (K)
+  IC_X_g(1,1)   =  1.0
+
+! Solids phase
+!----------------------------
+  IC_U_s(1,1)   =  0.0        ! (m/s)
+  IC_V_s(1,1)   =  0.0        ! (m/s)
+  IC_W_s(1,1)   =  0.0        ! (m/s)
+
+  IC_T_s(1,1)   =  298.0      ! (K)
+
+  IC_X_s(1,1,1) =  1.0
+
+! Bed
+!-----------------------------------------------------------------------------//
+  IC_X_w(2)     =  0.0      ! (m)
+  IC_X_e(2)     =  0.1      ! (m)
+  IC_Y_s(2)     =  0.0      ! (m)
+  IC_Y_n(2)     =  0.155    ! (m)
+  IC_Z_b(2)     =  0.0      ! (m)
+  IC_Z_t(2)     =  0.1      ! (m)
+
+! Gas Phase
+!----------
+  IC_EP_g(2)    =  0.41     ! (m)
+
+  IC_U_g(2)     =  0.0      ! (m/s)
+  IC_V_g(2)     =  0.1      ! (m/s)
+  IC_W_g(2)     =  0.0
+
+  IC_P_g(2)     =  101325.0 ! (Pa)
+  IC_T_g(2)     =  298.0    ! (K)
+
+  IC_X_g(2,1)   =  1.0
+
+! Solids phase
+!----------------------------
+  IC_U_s(2,1)   =  0.0         ! (m/s)
+  IC_V_s(2,1)   =  @(0.41/0.1) ! (m/s)
+  IC_W_s(2,1)   =  0.0         ! (m/s)
+
+  IC_T_s(2,1)   =  298.0     ! (K)
+
+  IC_X_s(2,1,1) =  1.0
+
+
+#_______________________________________________________________________________
+# BOUNDARY CONDITIONS SECTION
+! Uniform fluidization at bottom
+!-----------------------------------------------------------------------------//
+  BC_X_w(1)        =  0.0      ! (m)
+  BC_X_e(1)        =  0.1      ! (m)
+  BC_Y_s(1)        =  0.0      ! (m)
+  BC_Y_n(1)        =  0.0      ! (m)
+  BC_Z_b(1)        =  0.0      ! (m)
+  BC_Z_t(1)        =  0.1      ! (m)
+
+  BC_TYPE(1)       =  'MI'
+
+! Gas phase
+!----------------------------
+  BC_EP_g(1)       =  1.0      ! (-)
+
+  BC_U_g(1)        =  0.0
+  BC_V_g(1)        =  0.115
+  BC_W_g(1)        =  0.0
+  
+  BC_P_g(1)        =  101325.0 ! (Pa)
+
+  BC_T_g(1)        =  298.0    ! (K)
+  
+  BC_X_g(1,1)      =  1.0
+
+! Solids phase
+!----------------------------
+  BC_U_s(1,1)      =  0.0
+  BC_V_s(1,1)      =  0.0
+  BC_W_s(1,1)      =  0.0
+
+  BC_T_s(1,1)      =  298.0
+
+  BC_X_s(1,1,1)    =  1.0
+
+! Pressure Outlets
+!-----------------------------------------------------------------------------//
+  BC_X_w(3)        =  0.0      ! (m)
+  BC_X_e(3)        =  0.1      ! (m)
+  BC_Y_s(3)        =  0.4      ! (m)
+  BC_Y_n(3)        =  0.4      ! (m)
+  BC_Z_b(3)        =  0.0      ! (m)
+  BC_Z_t(3)        =  0.1      ! (m)
+
+  BC_TYPE(3)       = 'PO'
+  
+  BC_P_g(3)        =  101325.0 ! (pa) 
+
+! Cooling tubes  
+!-----------------------------------------------------------------------------//
+  CARTESIAN_GRID   = .TRUE.
+
+  TOL_F            = 1.0D-7
+  ITERMAX_INT      = 5000
+
+  N_QUADRIC        = 1
+  
+  QUADRIC_FORM(1)  = 'Y_CYL_INT'
+  RADIUS(1)        =  0.05
+  T_X(1)           =  0.05
+  T_Y(1)           =  0.0
+  T_Z(1)           =  0.05
+  BC_ID_Q(1)       =  5
+  
+  BC_TYPE(5)       = 'CG_NSW'  
+
+  TOL_SNAP         = 0.1
+  TOL_DELH         = 0.1
+  TOL_SMALL_AREA   = 0.1 
+  TOL_SMALL_CELL   = 0.1
+  FAC_DIM_MAX_CUT_CELL = 1.0
+
+  WRITE_DASHBOARD  = .TRUE.
+  WRITE_VTK_FILES  = .TRUE.
+  VTK_DT           =  0.01
+
+#_______________________________________________________________________________
+# OUTPUT CONTROL SECTION
+! RES and SPX files
+!-----------------------------------------------------------------------------//
+  RES_DT       =  0.1
+  SPX_DT(1)    =  0.1      ! EP_g
+  SPX_DT(2)    =  0.1      ! P_g, P*
+  SPX_DT(3)    =  0.1      ! U_g, V_g, W_g
+  SPX_DT(4)    =  0.1      ! U_s, V_s, W_s
+  SPX_DT(5)    =  0.1      ! ROP_s
+  SPX_DT(6)    =  0.1      ! T_g, T_s
+  SPX_DT(7)    =  0.1      ! X_g, X_s
+  SPX_DT(8)    =  100.0    ! Theta
+  SPX_DT(9)    =  100.0    ! UDS
+  SPX_DT(10)   =  0.1      ! RRates
+  SPX_DT(11)   =  100.0    ! k, e
+
+  RESID_STRING    = 'P0', 'U0', 'V0','W0', 'U1', 'V1','W1'
+  GROUP_RESID     = .TRUE.
+
+  NLOG            = 25
+  FULL_LOG        = .TRUE.
+  WRITE_DASHBOARD = .TRUE.
+  F_DASHBOARD     = 1
+
+#_______________________________________________________________________________
+# DMP SETUP
+  NODESI =  1
+  NODESJ =  4
+  NODESK =  1
