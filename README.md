@@ -1,4 +1,4 @@
-# filtered_models
+# Filtered Models
 Filtered models for the hydrodynamics and heat transfer associated with horizontal cylindrical objects in a flow path.
 
 ## Development Practices
@@ -13,18 +13,20 @@ Filtered models for the hydrodynamics and heat transfer associated with horizont
 
 ## Getting Started
 
-TBD
+See installation and user guide documents:
+* [Gas Particle Cylinder 2D Models](./gas-particle-cylinder_2d_models/docs)
+* [Gas Solid 3D Models](./gas-solid-3d-models/docs) 
 
 ## Authors
 
 * William Lane
 
-See also the list of [contributors](https://github.com/CCSI-Toolset/filtered_models/contributors) who participated in this project.
+See also the list of [contributors](../../contributors) who participated in this project.
 
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, 
-see the [tags on this repository](https://github.com/filtered_models/tags). 
+see the [releases](../../releases) or [tags](../../tags) for this repository. 
 
 ## License & Copyright
 
