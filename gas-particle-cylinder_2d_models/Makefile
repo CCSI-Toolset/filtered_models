@@ -5,11 +5,11 @@ LICENSE := ../LICENSE.md
 PKG_DIR := CCSI_$(PRODUCT)_$(VERSION)
 PACKAGE := $(PKG_DIR).tgz
 
-PARENT_PAYLOAD := ../LICENSE.md ../README.md
+PARENT_PAYLOAD := $(LICENSE) ../README.md
 PARENT_PAYLOAD_LOCAL := $(shell echo $(PARENT_PAYLOAD) | sed 's:../::g')
 
 
-PAYLOAD := $(wildcard docs/*.pdf) \
+PAYLOAD := docs/*.pdf \
 	   model/     \
 	   example1   \
 	   example2   \
