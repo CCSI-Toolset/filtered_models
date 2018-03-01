@@ -1,6 +1,8 @@
 # Filtered Models
 Filtered models for the hydrodynamics and heat transfer associated with horizontal cylindrical objects in a flow path.
 
+Note: this product is also part of the [CFDModels_bundle](../../../CFDModels_bundle)
+
 ## Getting Started
 See installation and user guide documents:
 * [Gas Particle Cylinder 2D Models](./gas-particle-cylinder_2d_models/docs)
